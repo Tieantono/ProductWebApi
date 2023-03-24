@@ -12,11 +12,64 @@ namespace AspNetCoreWebApi.Sql.Entities
         {
         }
 
+        public virtual DbSet<LearningClass> LearningClasses { get; set; } = null!;
+        public virtual DbSet<LearningClassStudent> LearningClassStudents { get; set; } = null!;
+        public virtual DbSet<Lecturer> Lecturers { get; set; } = null!;
         public virtual DbSet<School> Schools { get; set; } = null!;
         public virtual DbSet<Student> Students { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<LearningClass>(entity =>
+            {
+                entity.ToTable("learning_classes");
+
+                entity.Property(e => e.LearningClassId).HasColumnName("learning_class_id");
+
+                entity.Property(e => e.FinishDate).HasColumnName("finish_date");
+
+                entity.Property(e => e.LecturerId).HasColumnName("lecturer_id");
+
+                entity.Property(e => e.StartDate).HasColumnName("start_date");
+
+                entity.HasOne(d => d.Lecturer)
+                    .WithMany(p => p.LearningClasses)
+                    .HasForeignKey(d => d.LecturerId)
+                    .HasConstraintName("learning_classes__lecturers_fkey");
+            });
+
+            modelBuilder.Entity<LearningClassStudent>(entity =>
+            {
+                entity.HasKey(e => new { e.LearningClassId, e.StudentId })
+                    .HasName("learning_class_students_pkey");
+
+                entity.ToTable("learning_class_students");
+
+                entity.Property(e => e.LearningClassId).HasColumnName("learning_class_id");
+
+                entity.Property(e => e.StudentId).HasColumnName("student_id");
+            });
+
+            modelBuilder.Entity<Lecturer>(entity =>
+            {
+                entity.ToTable("lecturers");
+
+                entity.Property(e => e.LecturerId)
+                    .HasColumnName("lecturer_id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.FullName).HasColumnName("full_name");
+
+                entity.Property(e => e.SchoolId).HasColumnName("school_id");
+
+                entity.Property(e => e.Subject).HasColumnName("subject");
+
+                entity.HasOne(d => d.School)
+                    .WithMany(p => p.Lecturers)
+                    .HasForeignKey(d => d.SchoolId)
+                    .HasConstraintName("lecturers__schools_fkey");
+            });
+
             modelBuilder.Entity<School>(entity =>
             {
                 entity.ToTable("schools");

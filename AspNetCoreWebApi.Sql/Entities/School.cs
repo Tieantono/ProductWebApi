@@ -7,6 +7,7 @@ namespace AspNetCoreWebApi.Sql.Entities
     {
         public School()
         {
+            Lecturers = new HashSet<Lecturer>();
             Students = new HashSet<Student>();
         }
 
@@ -14,6 +15,7 @@ namespace AspNetCoreWebApi.Sql.Entities
         public string Name { get; set; } = null!;
         public DateTime EstablishedAt { get; set; }
 
+        public virtual ICollection<Lecturer> Lecturers { get; set; }
         public virtual ICollection<Student> Students { get; set; }
     }
 }

@@ -45,7 +45,6 @@ namespace AspNetCoreWebApi.Services
                 page -= 1;
             }
 
-
             query = query
                 // Don't forget to include ORDER BY clause whenever you want to implement an offset pagination.
                 .OrderByDescending(Q => Q.st.StudentId)
