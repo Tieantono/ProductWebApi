@@ -1,5 +1,6 @@
 ﻿using AspNetCoreWebApi.Models;
 using AspNetCoreWebApi.Sql.Entities;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreWebApi.Services
@@ -134,6 +135,50 @@ namespace AspNetCoreWebApi.Services
             await _db.SaveChangesAsync();
 
             return (true, string.Empty, $"Successfully inserted new learning class data with ID: {learningClass.LearningClassId}");
+        }
+
+        public async Task<List<LecturerDropdownModel>> GetLecturerDropdown(string? lecturerName)
+        {
+            var query = _db.Lecturers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(lecturerName))
+            {
+                var searchString = lecturerName.ToUpper();
+                query = query.Where(Q => Q.FullName.ToUpper().StartsWith(searchString));
+            }
+
+            var lecturers = await query
+                .AsNoTracking()
+                .Select(Q => new LecturerDropdownModel
+                {
+                    Label = Q.FullName,
+                    Value = Q.LecturerId.ToString(),
+                })
+                .ToListAsync();
+
+            return lecturers;
+        }
+
+        public async Task<List<StudentDropdownModel>> GetStudentDropdown(string? studentName)
+        {
+            var query = _db.Students.AsQueryable();
+
+            if (!string.IsNullOrEmpty(studentName))
+            {
+                var searchString = studentName.ToUpper();
+                query = query.Where(Q => Q.FullName.ToUpper().StartsWith(searchString));
+            }
+
+            var students = await query
+                .AsNoTracking()
+                .Select(Q => new StudentDropdownModel
+                {
+                    Label = Q.FullName,
+                    Value = Q.StudentId,
+                })
+                .ToListAsync();
+
+            return students;
         }
     }
 }

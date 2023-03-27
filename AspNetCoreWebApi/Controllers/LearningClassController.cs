@@ -24,6 +24,22 @@ namespace AspNetCoreWebApi.Controllers
             return Ok(learningClassData);
         }
 
+        [HttpGet("lecturers")]
+        public async Task<ActionResult> GetLecturerDropdown([FromQuery] string? lecturerName)
+        {
+            var lecturers = await _learningClassCrudService.GetLecturerDropdown(lecturerName);
+
+            return Ok(lecturers);
+        }
+
+        [HttpGet("students")]
+        public async Task<ActionResult> GetStudentDropdown([FromQuery] string? studentName)
+        {
+            var students = await _learningClassCrudService.GetStudentDropdown(studentName);
+
+            return Ok(students);
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CreateLearningClassForm newLearningClass)
         {
